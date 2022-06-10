@@ -7,7 +7,7 @@ public class AsciiScale {
 
     public static char toAsciiChar(Color color){
         int gray = color.getRed();
-        int index = (int)(gray/255.0 * ASCII_SIMPLE.length());
+        int index = (int)(gray/255.0 * (ASCII_SIMPLE.length()-1));
         return ASCII_SIMPLE.charAt(index);
     }
 

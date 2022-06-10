@@ -20,7 +20,7 @@ public class App {
     public static void main(String[] args) {
         try {
             // Read source image
-            File file = new File("main/src/main/resources/morbius_poster.jpg");
+            File file = new File("main/src/main/resources/gojo_cat.jpg");
             BufferedImage img = ImageIO.read(file);
 
             // Create grayscaled version of image
@@ -31,6 +31,18 @@ public class App {
                     Color color = GrayScale.toGrayColor(intToColor(rgba));
                     grayImg.setRGB(x, y, color.getRGB());
                 }
+            }
+
+            // Print out ascii version
+            double xInc = 3.5;
+            double yInc = 8;
+            for(double y = 0; y < grayImg.getHeight(); y += yInc){
+                for(double x = 0; x < grayImg.getWidth(); x += xInc){
+                    int rgba = grayImg.getRGB((int)x, (int)y);
+                    Color color = intToColor(rgba);
+                    System.out.print(AsciiScale.toAsciiChar(color));
+                }
+                System.out.println();
             }
 
             // Output grayscaled image
