@@ -1,6 +1,6 @@
 package com.asciiart;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class GrayScale{
     public static Color toGrayColor(Color color){
