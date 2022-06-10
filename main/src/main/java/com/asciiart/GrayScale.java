@@ -7,7 +7,7 @@ public class GrayScale{
         int red = color.getRed();
         int green = color.getGreen();
         int blue = color.getBlue();
-        int avg = (int)(red + green + blue)/3;
+        int avg = (red + green + blue)/3;
         return new Color(avg, avg, avg);
     }
 
