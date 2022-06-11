@@ -1,4 +1,5 @@
-*.class
 *.jpg
 *.jpeg
 *.png
+*.cache
+obj/Debug
