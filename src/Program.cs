@@ -13,6 +13,7 @@ public class Program
 
     public static async Task<int> Main(string[] args)
     {
+        #region Global options/arguments for program
         Option<FileInfo> input = new Option<FileInfo>(
             name: "--input",
             description: "File location of image to process."
@@ -22,20 +23,25 @@ public class Program
             name: "--output",
             description: "Output destination of processed image."
         );
+        #endregion
 
+        #region Specific image algorithm commands
+        // Convert image to ascii art
         Command ascii = new Command("ascii", "Converts image to an ascii representation.");
-        ascii.SetHandler((input) => {
+        ascii.SetHandler((input, output) => {
             Bitmap img = new Bitmap(input.FullName);
-            FileStream output = File.Create(replaceExtension(input.FullName, "_output.txt"));
-            AsciiScale.writeConverted(img, output);
-        }, input);
+            FileStream fs = output is null ? File.Create(replaceExtension(input.FullName, "_output.txt")) : File.Create(output.FullName);
+            AsciiScale.writeConverted(img, fs);
+        }, input, output);
 
+        // Convert image to grayscale version
         Command grayscale = new Command("grayscale", "Converts image to grayscale.");
-        grayscale.SetHandler((input) =>{
+        grayscale.SetHandler((input, output) =>{
             Bitmap img = new Bitmap(input.FullName);
-            FileStream output = File.Create(replaceExtension(input.FullName, "_output.jpg"));
-            GrayScale.writeConverted(img, output);
-        }, input);
+            FileStream fs = output is null ? File.Create(replaceExtension(input.FullName, "_output.jpg")) : File.Create(output.FullName);
+            GrayScale.writeConverted(img, fs);
+        }, input, output);
+        #endregion
 
         // Create root command, including global options
         RootCommand rootCommand = new RootCommand("A command line tool for applying filters to images.");
