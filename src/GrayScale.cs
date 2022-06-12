@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Drawing.Imaging;
 
 public class GrayScale{
     public static Color toGrayColor(Color color){
@@ -15,5 +16,20 @@ public class GrayScale{
             }
         }
         return grayColors;
+    }
+
+    public static void writeGrayScale(Bitmap img, Stream output){
+        // Create grayscaled version of image
+        for (int x = 0; x < img.Width; x++)
+        {
+            for (int y = 0; y < img.Height; y++)
+            {
+                Color color = GrayScale.toGrayColor(img.GetPixel(x, y));
+                img.SetPixel(x, y, color);
+            }
+        }
+
+        // Output grayscaled image
+        img.Save(output, ImageFormat.Jpeg);
     }
 }

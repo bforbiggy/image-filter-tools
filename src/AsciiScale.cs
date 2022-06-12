@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Text;
 
 public class AsciiScale {
     public const String ASCII_SIMPLE = " .:-=+*#%@";
@@ -19,5 +20,24 @@ public class AsciiScale {
             }
         }
         return text;
+    }
+
+    public static void writeAscii(Bitmap img, Stream output)
+    {
+        StreamWriter sw = new StreamWriter(output);
+
+        double xInc = 1;
+        double yInc = 2.5;
+        for (double y = 0; y < img.Height; y += yInc)
+        {
+            for (double x = 0; x < img.Width; x += xInc)
+            {
+                Color color = img.GetPixel((int)x, (int)y);
+                sw.Write(AsciiScale.toAsciiChar(color));
+            }
+            sw.Write("\n");
+        }
+
+        sw.Close();
     }
 }

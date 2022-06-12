@@ -1,58 +1,43 @@
 ﻿using System.Drawing;
-using System.Drawing.Imaging;
-using System.Text;
+using System.CommandLine;
 
 public class Program
 {
-    public static void writeAscii(Bitmap img, String outputPath)
-    {
-        StringBuilder sb = new StringBuilder();
-        
-        double xInc = 1;
-        double yInc = 2.5;
-        for (double y = 0; y < img.Height; y += yInc)
-        {
-            for (double x = 0; x < img.Width; x += xInc)
-            {
-                Color color = img.GetPixel((int)x, (int)y);
-                sb.Append(AsciiScale.toAsciiChar(color));
-            }
-            sb.Append("\n");
-        }
-
-        File.WriteAllText(outputPath, sb.ToString());
+    private static string replaceExtension(String path, String newExt){
+        if(Path.HasExtension(path))
+            path = path.Substring(0, path.LastIndexOf("."));
+        return path + newExt;
     }
 
-    public static void writeGrayScale(Bitmap img, String outputPath)
+    public static async Task<int> Main(string[] args)
     {
-        // Create grayscaled version of image
-        Bitmap grayImg = new Bitmap(img.Width, img.Height);
-        for(int x = 0; x < img.Width; x++)
-        {
-            for(int y = 0; y < img.Height; y++)
-            {
-                Color color = GrayScale.toGrayColor(img.GetPixel(x, y));
-                grayImg.SetPixel(x, y, color);
-            }
-        }
+        Option<FileInfo> input = new Option<FileInfo>(
+            name: "--input",
+            description: "The image to be processed."
+        );
 
-        // Output grayscaled image
-        grayImg.Save(outputPath, ImageFormat.Jpeg);
-    }
+        Command ascii = new Command("ascii", "Converts image to an ascii representation.");
+        ascii.SetHandler((input) => {
+            Bitmap img = new Bitmap(input.FullName);
+            FileStream output = File.Create(replaceExtension(input.FullName, "_output.txt"));
+            AsciiScale.writeAscii(img, output);
+        }, input);
 
-    public static void Main(String[] args)
-    {
-        // Read source image
-        Bitmap img = new Bitmap(args[0]);
+        Command grayscale = new Command("grayscale", "Converts image to grayscale.");
+        grayscale.SetHandler((input) =>{
+            Bitmap img = new Bitmap(input.FullName);
+            FileStream output = File.Create(replaceExtension(input.FullName, "_output.jpg"));
+            GrayScale.writeGrayScale(img, output);
+        }, input);
 
-        // Determine operation based on next arg
-        args[0] = args[0].Substring(0, args[0].LastIndexOf("."));
-        String option = args[1].ToLower();
-        if(option == "ascii"){
-            writeAscii(img, $"{Directory.GetCurrentDirectory()}/{args[0]}_output.txt");
-        }
-        else if(option == "grayscale"){
-            writeGrayScale(img, $"{Directory.GetCurrentDirectory()}/{args[0]}_output.jpg");
-        }
+        // Create root command, including global options
+        RootCommand rootCommand = new RootCommand("A command line tool for applying filters to images.");
+        rootCommand.AddGlobalOption(input);
+
+        // Enable all available image operations
+        rootCommand.AddCommand(ascii);
+        rootCommand.AddCommand(grayscale);
+
+        return await rootCommand.InvokeAsync(args);
     }
 }
