@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿namespace image_to_ascii;
+
+using System.Drawing;
 using System.CommandLine;
 
 public class Program
@@ -13,26 +15,32 @@ public class Program
     {
         Option<FileInfo> input = new Option<FileInfo>(
             name: "--input",
-            description: "The image to be processed."
+            description: "File location of image to process."
+        ){ IsRequired = true };
+
+        Option<FileInfo?> output = new Option<FileInfo?>(
+            name: "--output",
+            description: "Output destination of processed image."
         );
 
         Command ascii = new Command("ascii", "Converts image to an ascii representation.");
         ascii.SetHandler((input) => {
             Bitmap img = new Bitmap(input.FullName);
             FileStream output = File.Create(replaceExtension(input.FullName, "_output.txt"));
-            AsciiScale.writeAscii(img, output);
+            AsciiScale.writeConverted(img, output);
         }, input);
 
         Command grayscale = new Command("grayscale", "Converts image to grayscale.");
         grayscale.SetHandler((input) =>{
             Bitmap img = new Bitmap(input.FullName);
             FileStream output = File.Create(replaceExtension(input.FullName, "_output.jpg"));
-            GrayScale.writeGrayScale(img, output);
+            GrayScale.writeConverted(img, output);
         }, input);
 
         // Create root command, including global options
         RootCommand rootCommand = new RootCommand("A command line tool for applying filters to images.");
         rootCommand.AddGlobalOption(input);
+        rootCommand.AddGlobalOption(output);
 
         // Enable all available image operations
         rootCommand.AddCommand(ascii);
