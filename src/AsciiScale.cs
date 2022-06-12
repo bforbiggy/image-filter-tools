@@ -1,7 +1,6 @@
 namespace image_to_ascii;
 
 using System.Drawing;
-using System.Text;
 
 public class AsciiScale {
     public const String ASCII_SIMPLE = " .:-=+*#%@";
