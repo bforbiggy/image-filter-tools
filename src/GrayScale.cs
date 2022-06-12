@@ -1,4 +1,4 @@
-namespace image_to_ascii;
+namespace image_filter_tools;
 
 using System.Drawing;
 using System.Drawing.Imaging;
