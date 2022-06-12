@@ -3,3 +3,4 @@
 *.png
 *.cache
 obj/Debug
+bin

@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Repositories\\Testing\\Testing.csproj": {}
+    "C:\\Repositories\\image-to-ascii\\Testing.csproj": {}
   },
   "projects": {
-    "C:\\Repositories\\Testing\\Testing.csproj": {
+    "C:\\Repositories\\image-to-ascii\\Testing.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Repositories\\Testing\\Testing.csproj",
+        "projectUniqueName": "C:\\Repositories\\image-to-ascii\\Testing.csproj",
         "projectName": "Testing",
-        "projectPath": "C:\\Repositories\\Testing\\Testing.csproj",
+        "projectPath": "C:\\Repositories\\image-to-ascii\\Testing.csproj",
         "packagesPath": "C:\\Users\\biggy\\.nuget\\packages\\",
-        "outputPath": "C:\\Repositories\\Testing\\obj\\",
+        "outputPath": "C:\\Repositories\\image-to-ascii\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Repositories\\Testing\\NuGet.Config",
+          "C:\\Repositories\\image-to-ascii\\NuGet.Config",
           "C:\\Users\\biggy\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
@@ -54,12 +54,31 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
+              "version": "[6.0.2, 6.0.2]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Runtime.win-x64",
+              "version": "[6.0.2, 6.0.2]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
+              "version": "[6.0.2, 6.0.2]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.200\\RuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win-x64": {
+          "#import": []
         }
       }
     }
