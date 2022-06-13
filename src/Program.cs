@@ -40,7 +40,13 @@ public class Program
     {
         // Because some goofy type people might run the executable with no arguments, let's ask for some.
         if(Console.GetCursorPosition() == (0, 0)){
-            
+            Console.WriteLine("WHY ARE YOU SO GOOFY? Please don't run this program without arguments and use this in the intended way.");
+            Console.WriteLine("Althoooough if you really want to run a limited version of this program, keep reading but no asking for help.\n\n");
+            Console.Write(@"Enter the input image path (ex. lol.png, C:\Users\mrbiggy\Desktop\test.png): ");
+            string inputPath = Console.ReadLine()!;
+            Console.Write(@"Enter the algorithm (ex. ascii, grayscale): ");
+            string algo = Console.ReadLine()!;
+            args = new string[]{algo, "--input", inputPath};
         }
 
         #region Global options/arguments for program
