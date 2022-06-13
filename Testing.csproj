@@ -4,6 +4,7 @@
 		<SelfContained>true</SelfContained>
 		<PublishSingleFile>true</PublishSingleFile>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<NoWarn>CA1416</NoWarn>
 
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 		<TargetFramework>net6.0</TargetFramework>

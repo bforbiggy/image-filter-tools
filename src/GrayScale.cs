@@ -9,7 +9,7 @@ public class GrayScale{
         return Color.FromArgb(avg, avg, avg);
     }
 
-    public static Color[][] covertColors(Color[][] colors){
+    public static Color[][] convertColors(Color[][] colors){
         Color[][] grayColors = new Color[colors.Length][];
         for(int y = 0; y < colors.Length; y++){
             grayColors[y] = new Color[colors[y].Length];

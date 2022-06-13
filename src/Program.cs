@@ -3,74 +3,92 @@
 using System.Drawing;
 using System.CommandLine;
 using System.IO;
+using System.CommandLine.Parsing;
 
 public class Program
 {
-    static string inputPath = "";
-    static Bitmap img;
-    
-    static string? outputPath = null;
-    static FileStream? fsOut = null;
-
-    private static string replaceExtension(String path, String newExt){
-        if(Path.HasExtension(path))
-            path = path.Substring(0, path.LastIndexOf("."));
-        return path + newExt;
+    /// <summary>
+    /// Given a path to an image, attemp to load said image.
+    /// The loaded image can also be scaled if necessary.
+    /// </summary>
+    /// <param name="path">Path to image</param>
+    /// <param name="scale">Scale factor for image</param>
+    /// <returns></returns>
+    private static Bitmap imgFromPath(string path, double scale){
+        Bitmap image = new Bitmap(path);
+        if(scale != 1.0){
+            Size size = new Size((int)(image.Width * scale), (int)(image.Height * scale));
+            image = new Bitmap(image, size);
+        }
+        return image;
     }
 
-    public static async Task<int> Main(string[] args)
+    /// <summary>
+    /// When given the path for the original source image, this method generates a new path.
+    /// This is useful for generating output paths that do not override original images.
+    /// </summary>
+    /// <param name="inputPath">The original source image path.</param>
+    /// <param name="ext">The extension of output, which is .jpg by default.</param>
+    /// <returns>Output path.</returns>
+    private static string genOutputPath(string inputPath, string ext = ".jpg"){
+        if (Path.HasExtension(inputPath))
+            inputPath = inputPath.Substring(0, inputPath.LastIndexOf("."));
+        return inputPath + ext;
+    }
+
+    public static void Main(string[] args)
     {
+        // Because some goofy type people might run the executable with no arguments, let's ask for some.
+        if(Console.GetCursorPosition() == (0, 0)){
+            
+        }
+
         #region Global options/arguments for program
         Option<FileInfo> input = new Option<FileInfo>(
             name: "--input",
-            description: "File location of image to process.",
-            parseArgument: (result) => {
-                inputPath = result.Tokens.Single().Value;
-                img = new Bitmap(inputPath);
-                return new FileInfo(inputPath);
-            }
+            description: "File location of image to process."
         ){ IsRequired = true };
 
-        Option<FileInfo?> output = new Option<FileInfo?>(
+        Option<string> output = new Option<string>(
             name: "--output",
-            description: "Output destination of processed image.",
-            parseArgument: (result) => {
-                string output = result.Tokens.Single().Value;
+            description: "Output destination of processed image."
+        );
 
-                fsOut = File.Create(output);
-                outputPath = output;
-                
-                return new FileInfo(output);
-            }
+        Option<double> resize = new Option<double>(
+            name: "--resize",
+            description: "Scale the output image by this factor.",
+            getDefaultValue: () => 1.0
         );
         #endregion
 
-        #region Specific image algorithm commands
+        #region Specific algorithms
         // Convert image to ascii art
         Command ascii = new Command("ascii", "Converts image to an ascii representation.");
-        ascii.SetHandler((input, output) => {
-            outputPath = outputPath ?? replaceExtension(inputPath, "_output.txt");
-            AsciiScale.writeConverted(img, fsOut ?? File.Create(outputPath));
-        }, input, output);
+        ascii.SetHandler((inputPath, outputPath, scaleFactor) => {
+            Bitmap img = imgFromPath(inputPath.FullName, scaleFactor);
+            FileStream fs = File.Create(outputPath ?? genOutputPath(inputPath.FullName, ".txt"));
+            AsciiScale.writeConverted(img, fs);
+        }, input, output, resize);
 
         // Convert image to grayscale version
         Command grayscale = new Command("grayscale", "Converts image to grayscale.");
-        grayscale.SetHandler((input, output) =>{
-
-            outputPath = outputPath ?? replaceExtension(inputPath, "_output.jpg");
-            GrayScale.writeConverted(img, fsOut ?? File.Create(outputPath));
-        }, input, output);
+        grayscale.SetHandler((inputPath, outputPath, scaleFactor) =>{
+            Bitmap img = imgFromPath(inputPath.FullName, scaleFactor);
+            FileStream fs = File.Create(outputPath ?? genOutputPath(inputPath.FullName, ".jpg"));
+            AsciiScale.writeConverted(img, fs);
+        }, input, output, resize);
         #endregion
 
-        // Create root command, including global options
+        // Create root command and add global options
         RootCommand rootCommand = new RootCommand("A command line tool for applying filters to images.");
         rootCommand.AddGlobalOption(input);
         rootCommand.AddGlobalOption(output);
+        rootCommand.AddGlobalOption(resize);
 
         // Enable all available image operations
         rootCommand.AddCommand(ascii);
         rootCommand.AddCommand(grayscale);
 
-        return await rootCommand.InvokeAsync(args);
+        rootCommand.Invoke(args);
     }
 }
