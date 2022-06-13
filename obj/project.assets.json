@@ -302,9 +302,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Repositories\\image-filter-tools\\Testing.csproj",
-      "projectName": "Testing",
-      "projectPath": "C:\\Repositories\\image-filter-tools\\Testing.csproj",
+      "projectUniqueName": "C:\\Repositories\\image-filter-tools\\image-filter-tools.csproj",
+      "projectName": "image-filter-tools",
+      "projectPath": "C:\\Repositories\\image-filter-tools\\image-filter-tools.csproj",
       "packagesPath": "C:\\Users\\biggy\\.nuget\\packages\\",
       "outputPath": "C:\\Repositories\\image-filter-tools\\obj\\",
       "projectStyle": "PackageReference",
