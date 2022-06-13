@@ -2,9 +2,16 @@
 
 using System.Drawing;
 using System.CommandLine;
+using System.IO;
 
 public class Program
 {
+    static string inputPath = "";
+    static Bitmap img;
+    
+    static string? outputPath = null;
+    static FileStream? fsOut = null;
+
     private static string replaceExtension(String path, String newExt){
         if(Path.HasExtension(path))
             path = path.Substring(0, path.LastIndexOf("."));
@@ -16,12 +23,25 @@ public class Program
         #region Global options/arguments for program
         Option<FileInfo> input = new Option<FileInfo>(
             name: "--input",
-            description: "File location of image to process."
+            description: "File location of image to process.",
+            parseArgument: (result) => {
+                inputPath = result.Tokens.Single().Value;
+                img = new Bitmap(inputPath);
+                return new FileInfo(inputPath);
+            }
         ){ IsRequired = true };
 
         Option<FileInfo?> output = new Option<FileInfo?>(
             name: "--output",
-            description: "Output destination of processed image."
+            description: "Output destination of processed image.",
+            parseArgument: (result) => {
+                string output = result.Tokens.Single().Value;
+
+                fsOut = File.Create(output);
+                outputPath = output;
+                
+                return new FileInfo(output);
+            }
         );
         #endregion
 
@@ -29,17 +49,16 @@ public class Program
         // Convert image to ascii art
         Command ascii = new Command("ascii", "Converts image to an ascii representation.");
         ascii.SetHandler((input, output) => {
-            Bitmap img = new Bitmap(input.FullName);
-            FileStream fs = output is null ? File.Create(replaceExtension(input.FullName, "_output.txt")) : File.Create(output.FullName);
-            AsciiScale.writeConverted(img, fs);
+            outputPath = outputPath ?? replaceExtension(inputPath, "_output.txt");
+            AsciiScale.writeConverted(img, fsOut ?? File.Create(outputPath));
         }, input, output);
 
         // Convert image to grayscale version
         Command grayscale = new Command("grayscale", "Converts image to grayscale.");
         grayscale.SetHandler((input, output) =>{
-            Bitmap img = new Bitmap(input.FullName);
-            FileStream fs = output is null ? File.Create(replaceExtension(input.FullName, "_output.jpg")) : File.Create(output.FullName);
-            GrayScale.writeConverted(img, fs);
+
+            outputPath = outputPath ?? replaceExtension(inputPath, "_output.jpg");
+            GrayScale.writeConverted(img, fsOut ?? File.Create(outputPath));
         }, input, output);
         #endregion
 
