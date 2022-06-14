@@ -8,7 +8,7 @@ public class AsciiScale {
 
     public static char convertColor(Color color) {
         int gray = color.R;
-        int index = (int) (gray / 255.0 * (ASCII_SIMPLE.Length-1));
+        int index = (int)(gray / 255.0 * (ASCII_SIMPLE.Length - 1));
         return ASCII_SIMPLE[index];
     }
 
@@ -23,16 +23,13 @@ public class AsciiScale {
         return text;
     }
 
-    public static void writeConverted(Bitmap img, Stream output)
-    {
+    public static void writeConverted(Bitmap img, Stream output) {
         StreamWriter sw = new StreamWriter(output);
 
         double xInc = 1;
         double yInc = 2.5;
-        for (double y = 0; y < img.Height; y += yInc)
-        {
-            for (double x = 0; x < img.Width; x += xInc)
-            {
+        for (double y = 0; y < img.Height; y += yInc) {
+            for (double x = 0; x < img.Width; x += xInc) {
                 Color color = img.GetPixel((int)x, (int)y);
                 sw.Write(AsciiScale.convertColor(color));
             }

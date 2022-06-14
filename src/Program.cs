@@ -5,8 +5,7 @@ using System.CommandLine;
 using System.IO;
 using System.CommandLine.Parsing;
 
-public class Program
-{
+public class Program {
     /// <summary>
     /// Given a path to an image, attemp to load said image.
     /// The loaded image can also be scaled if necessary.
@@ -14,9 +13,9 @@ public class Program
     /// <param name="path">Path to image</param>
     /// <param name="scale">Scale factor for image</param>
     /// <returns></returns>
-    private static Bitmap imgFromPath(string path, double scale){
+    private static Bitmap imgFromPath(string path, double scale) {
         Bitmap image = new Bitmap(path);
-        if(scale != 1.0){
+        if (scale != 1.0) {
             Size size = new Size((int)(image.Width * scale), (int)(image.Height * scale));
             image = new Bitmap(image, size);
         }
@@ -30,30 +29,29 @@ public class Program
     /// <param name="inputPath">The original source image path.</param>
     /// <param name="ext">The extension of output, which is .jpg by default.</param>
     /// <returns>Output path.</returns>
-    private static string genOutputPath(string inputPath, string ext = ".jpg"){
+    private static string genOutputPath(string inputPath, string ext = ".jpg") {
         if (Path.HasExtension(inputPath))
             inputPath = inputPath.Substring(0, inputPath.LastIndexOf("."));
-        return inputPath + ext;
+        return inputPath + "_output" + ext;
     }
 
-    public static void Main(string[] args)
-    {
-        // Because some goofy type people might run the executable with no arguments, let's ask for some.
-        if(Console.GetCursorPosition() == (0, 0)){
+    public static void Main(string[] args) {
+        // Because some goofy type people might run the executable with no arguments, let's provide basic functionality.
+        if (Console.GetCursorPosition() == (0, 0)) {
             Console.WriteLine("WHY ARE YOU SO GOOFY? Please don't run this program without arguments and use this in the intended way.");
             Console.WriteLine("Althoooough if you really want to run a limited version of this program, keep reading but no asking for help.\n\n");
             Console.Write(@"Enter the input image path (ex. lol.png, C:\Users\mrbiggy\Desktop\test.png): ");
             string inputPath = Console.ReadLine()!;
             Console.Write(@"Enter the algorithm (ex. ascii, grayscale): ");
             string algo = Console.ReadLine()!;
-            args = new string[]{algo, "--input", inputPath};
+            args = new string[] { algo, "--input", inputPath };
         }
 
         #region Global options/arguments for program
         Option<FileInfo> input = new Option<FileInfo>(
             name: "--input",
             description: "File location of image to process."
-        ){ IsRequired = true };
+        ) { IsRequired = true };
 
         Option<string> output = new Option<string>(
             name: "--output",
@@ -78,10 +76,18 @@ public class Program
 
         // Convert image to grayscale version
         Command grayscale = new Command("grayscale", "Converts image to grayscale.");
-        grayscale.SetHandler((inputPath, outputPath, scaleFactor) =>{
+        grayscale.SetHandler((inputPath, outputPath, scaleFactor) => {
             Bitmap img = imgFromPath(inputPath.FullName, scaleFactor);
             FileStream fs = File.Create(outputPath ?? genOutputPath(inputPath.FullName, ".jpg"));
-            AsciiScale.writeConverted(img, fs);
+            GrayScale.writeConverted(img, fs);
+        }, input, output, resize);
+
+        // Blur image
+        Command blur = new Command("blur", "Performs a moving average blur.");
+        blur.SetHandler((inputPath, outputPath, scaleFactor) => {
+            Bitmap img = imgFromPath(inputPath.FullName, scaleFactor);
+            FileStream fs = File.Create(outputPath ?? genOutputPath(inputPath.FullName, ".jpg"));
+            BlurFilter.writeConverted(img, fs);
         }, input, output, resize);
         #endregion
 
@@ -94,6 +100,7 @@ public class Program
         // Enable all available image operations
         rootCommand.AddCommand(ascii);
         rootCommand.AddCommand(grayscale);
+        rootCommand.AddCommand(blur);
 
         rootCommand.Invoke(args);
     }
