@@ -7,8 +7,9 @@
 The only pre-requisite is a windows machine with a [.NET core runtime](https://dotnet.microsoft.com/en-us/download) of v6.0 and up.
 The program has only two required inputs:
 * Source image file path
-* Filter/Operation to apply
-The operation applied is always the first argument, where input path is specified via ```--input```.  
+* Filter/Operation to apply 
+
+The operation applied is always the first argument, where input path is specified via ```--input```. 
 For a comprehensive list of available options, see program help via the -h option. 
  
  
