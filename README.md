@@ -1,6 +1,6 @@
 # image-filter-tools
-SUPER CRAZY HIDDEN TECH TOOLS?!?! Program with somewhat decent modularity and expandability?!?!? Sheeeeeeeeeeeeeeeeeesh! 
-Image filter tools is a cmd tool for applying simple filters/operations on images.
+Image filter tools is a command line tool for applying simple filters/operations on images.
+<img src="https://www.techexplorist.com/wp-content/uploads/2018/02/Proboscis-monkey1-768x432.jpg"/>
 
 ## How To Use
 The program has only two required inputs:
@@ -12,10 +12,11 @@ For a comprehensive list of available options, see program help via the -h optio
 ## Examples
 The bare minimum command specifies the operation and the file path  
 ```./image-filter-tools.exe ascii --input "C:\Users\biggy\Desktop\lol.png"```
+<img src="https://i.imgur.com/JW9OXdZ.png">
   
-  
-However, you specify more options as shown below  
-```./image-filter-tools.exe ascii --input "C:\Users\biggy\Desktop\lol.png"```
+However, you may specify more options as shown below  
+```./image-filter-tools.exe grayscale --input "lol.jpg" --resize 0.3 --output "C:\Users\biggy\Desktop\zamn.jpg"```
+<img src="https://i.imgur.com/TqFM97i.jpg">
 
 ## Optional Options
 output: Lets you specify output location  
@@ -24,3 +25,4 @@ resize: Scales image by factor
 ## Filters
 ascii: Converts input image into ascii art  
 grayscale: Grayscales input image  
+blur: blur images
