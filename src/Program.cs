@@ -65,14 +65,22 @@ public class Program {
         );
         #endregion
 
-        #region Specific algorithms
+        #region Specific algorithms and their related options
+        // Which ascii art set to use
+        Option<bool> detailed = new Option<bool>(
+            name: "--detailed",
+            description: "Whether or not to use detailed ascii art set.",
+            getDefaultValue: () => false
+        );
+
         // Convert image to ascii art
         Command ascii = new Command("ascii", "Converts image to an ascii representation.");
-        ascii.SetHandler((inputPath, outputPath, scaleFactor) => {
+        ascii.AddOption(detailed);
+        ascii.SetHandler((inputPath, outputPath, scaleFactor, isDetailed) => {
             Bitmap img = imgFromPath(inputPath.FullName, scaleFactor);
             FileStream fs = File.Create(outputPath ?? genOutputPath(inputPath.FullName, ".txt"));
-            AsciiScale.writeConverted(img, fs);
-        }, input, output, resize);
+            AsciiScale.writeConverted(img, fs, isDetailed);
+        }, input, output, resize, detailed);
 
         // Convert image to grayscale version
         Command grayscale = new Command("grayscale", "Converts image to grayscale.");
