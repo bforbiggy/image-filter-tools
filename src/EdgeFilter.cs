@@ -13,19 +13,13 @@ public class EdgeFilter {
     }
 
     public static Color[][] convertColors(Color[][] colors) {
-        Color[][] edgeColors = new Color[colors.Length][];
-        for (int y = 0; y < colors.Length; y++) {
-            edgeColors[y] = new Color[colors[y].Length];
-            for (int x = 0; x < colors.Length; x++) {
-                if (x != 0 && y != 0 && x != colors.Length - 1 && y != colors.Length - 1) {
-                    int c = (deltaColor(colors[y][x], colors[y][x + 1]) + deltaColor(colors[y][x], colors[y + 1][x])) / 2;
-                    edgeColors[y][x] = Color.FromArgb(c, c, c);
-                }
-                else
-                    edgeColors[y][x] = colors[y][x];
+        for (int y = 0; y < colors.Length - 1; y++) {
+            for (int x = 0; x < colors[0].Length - 1; x++) {
+                int c = (deltaColor(colors[y][x], colors[y][x + 1]) + deltaColor(colors[y][x], colors[y + 1][x])) / 2;
+                colors[y][x] = Color.FromArgb(c, c, c);
             }
         }
-        return edgeColors;
+        return colors;
     }
 
     public static void writeConverted(Bitmap img, Stream output) {
@@ -45,10 +39,4 @@ public class EdgeFilter {
         }
         img.Save(output, ImageFormat.Jpeg);
     }
-
-    // public static void Main(String[] args) {
-    //     Bitmap img = new Bitmap("pog.png");
-    //     Stream output = new FileStream("output.jpg", FileMode.Create);
-    //     writeConverted(img, output);
-    // }
 }

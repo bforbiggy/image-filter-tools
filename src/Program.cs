@@ -4,7 +4,6 @@ using System.Drawing;
 using System.CommandLine;
 using System.IO;
 using System.CommandLine.Parsing;
-using image_filter_tools.src;
 
 public class Program {
     /// <summary>
@@ -39,13 +38,10 @@ public class Program {
     public static void Main(string[] args) {
         // Because some goofy type people might run the executable with no arguments, let's provide basic functionality.
         if (Console.GetCursorPosition() == (0, 0)) {
-            Console.WriteLine("WHY ARE YOU SO GOOFY? Please don't run this program without arguments and use this in the intended way.");
-            Console.WriteLine("Althoooough if you really want to run a limited version of this program, keep reading but no asking for help.\n\n");
-            Console.Write(@"Enter the input image path (ex. lol.png, C:\Users\mrbiggy\Desktop\test.png): ");
-            string inputPath = Console.ReadLine()!;
-            Console.Write(@"Enter the algorithm (ex. ascii, grayscale): ");
-            string algo = Console.ReadLine()!;
-            args = new string[] { algo, "--input", inputPath };
+            Console.WriteLine(@"ARE YOU INSANE??!??!? Don't run this program by double-clicking it. Run this in the terminal");
+            Console.WriteLine(@"Shift-right click and ""Open in terminal"" then run the program. (ex. ""./image-filter-tools ascii --input pog.png --scale 0.3"")");
+            Console.WriteLine(@"Press any key to exit...");
+            Console.ReadKey();
         }
 
         #region Global options/arguments for program
@@ -74,7 +70,7 @@ public class Program {
             getDefaultValue: () => false
         );
 
-        // Convert image to ascii art
+        // ASCII-ify image
         Command ascii = new Command("ascii", "Converts image to an ascii representation.");
         ascii.AddOption(detailed);
         ascii.SetHandler((inputPath, outputPath, scaleFactor, isDetailed) => {
@@ -83,7 +79,7 @@ public class Program {
             AsciiScale.writeConverted(img, fs, isDetailed);
         }, input, output, resize, detailed);
 
-        // Convert image to grayscale version
+        // Grayscale image
         Command grayscale = new Command("grayscale", "Converts image to grayscale.");
         grayscale.SetHandler((inputPath, outputPath, scaleFactor) => {
             Bitmap img = imgFromPath(inputPath.FullName, scaleFactor);
@@ -98,6 +94,14 @@ public class Program {
             FileStream fs = File.Create(outputPath ?? genOutputPath(inputPath.FullName, ".jpg"));
             BlurFilter.writeConverted(img, fs);
         }, input, output, resize);
+
+        // Edge detect image
+        Command edge = new Command("edge", "Filter image to get image edges.");
+        edge.SetHandler((inputPath, outputPath, scaleFactor) => {
+            Bitmap img = imgFromPath(inputPath.FullName, scaleFactor);
+            FileStream fs = File.Create(outputPath ?? genOutputPath(inputPath.FullName, ".jpg"));
+            EdgeFilter.writeConverted(img, fs);
+        }, input, output, resize);
         #endregion
 
         // Create root command and add global options
@@ -110,6 +114,7 @@ public class Program {
         rootCommand.AddCommand(ascii);
         rootCommand.AddCommand(grayscale);
         rootCommand.AddCommand(blur);
+        rootCommand.AddCommand(edge);
 
         rootCommand.Invoke(args);
     }
