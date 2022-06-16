@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace image_filter_tools.src;
+namespace image_filter_tools;
 
 public class GuassianFilter {
     public static double[,] GUASSIAN_KERNEL = generateKernel(5, 5);
