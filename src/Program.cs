@@ -4,6 +4,7 @@ using System.Drawing;
 using System.CommandLine;
 using System.IO;
 using System.CommandLine.Parsing;
+using image_filter_tools.src;
 
 public class Program {
     /// <summary>
@@ -49,17 +50,17 @@ public class Program {
 
         #region Global options/arguments for program
         Option<FileInfo> input = new Option<FileInfo>(
-            name: "--input",
+            aliases: new string[] { "--input", "--i" },
             description: "File location of image to process."
         ) { IsRequired = true };
 
         Option<string> output = new Option<string>(
-            name: "--output",
+            aliases: new string[] { "--output", "--o" },
             description: "Output destination of processed image."
         );
 
         Option<double> resize = new Option<double>(
-            name: "--resize",
+            aliases: new string[] { "--resize", "--scale" },
             description: "Scale the output image by this factor.",
             getDefaultValue: () => 1.0
         );
@@ -68,7 +69,7 @@ public class Program {
         #region Specific algorithms and their related options
         // Which ascii art set to use
         Option<bool> detailed = new Option<bool>(
-            name: "--detailed",
+            aliases: new string[] { "--detailed", "--d" },
             description: "Whether or not to use detailed ascii art set.",
             getDefaultValue: () => false
         );

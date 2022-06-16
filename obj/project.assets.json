@@ -297,20 +297,20 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\biggy\\.nuget\\packages\\": {}
+    "/home/biggy/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Repositories\\image-filter-tools\\image-filter-tools.csproj",
+      "projectUniqueName": "/mnt/c/Repositories/image-filter-tools/image-filter-tools.csproj",
       "projectName": "image-filter-tools",
-      "projectPath": "C:\\Repositories\\image-filter-tools\\image-filter-tools.csproj",
-      "packagesPath": "C:\\Users\\biggy\\.nuget\\packages\\",
-      "outputPath": "C:\\Repositories\\image-filter-tools\\obj\\",
+      "projectPath": "/mnt/c/Repositories/image-filter-tools/image-filter-tools.csproj",
+      "packagesPath": "/home/biggy/.nuget/packages/",
+      "outputPath": "/mnt/c/Repositories/image-filter-tools/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Repositories\\image-filter-tools\\NuGet.Config",
-        "C:\\Users\\biggy\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/mnt/c/Repositories/image-filter-tools/nuget.config",
+        "/home/biggy/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
@@ -353,12 +353,26 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
+            "version": "[6.0.6, 6.0.6]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[6.0.6, 6.0.6]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Runtime.win-x64",
+            "version": "[6.0.6, 6.0.6]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.200\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/6.0.301/RuntimeIdentifierGraph.json"
       }
     },
     "runtimes": {
