@@ -102,6 +102,14 @@ public class Program {
             FileStream fs = File.Create(outputPath ?? genOutputPath(inputPath.FullName, ".jpg"));
             EdgeFilter.writeConverted(img, fs);
         }, input, output, resize);
+
+        // Sharpen image
+        Command sharpen = new Command("sharpen", "Sharpen image.");
+        sharpen.SetHandler((inputPath, outputPath, scaleFactor) => {
+            Bitmap img = imgFromPath(inputPath.FullName, scaleFactor);
+            FileStream fs = File.Create(outputPath ?? genOutputPath(inputPath.FullName, ".jpg"));
+            SharpenFilter.writeConverted(img, fs);
+        }, input, output, resize);
         #endregion
 
         // Create root command and add global options
@@ -115,6 +123,7 @@ public class Program {
         rootCommand.AddCommand(grayscale);
         rootCommand.AddCommand(blur);
         rootCommand.AddCommand(edge);
+        rootCommand.AddCommand(sharpen);
 
         rootCommand.Invoke(args);
     }

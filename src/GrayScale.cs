@@ -9,12 +9,11 @@ public class GrayScale {
         return Color.FromArgb(avg, avg, avg);
     }
 
-    public static Color[][] convertColors(Color[][] colors) {
-        Color[][] grayColors = new Color[colors.Length][];
+    public static Color[,] convertColors(Color[,] colors) {
+        Color[,] grayColors = new Color[colors.GetLength(0), colors.GetLength(1)];
         for (int y = 0; y < colors.Length; y++) {
-            grayColors[y] = new Color[colors[y].Length];
             for (int x = 0; x < colors.Length; x++) {
-                grayColors[y][x] = convertColor(colors[y][x]);
+                grayColors[y, x] = convertColor(colors[y, x]);
             }
         }
         return grayColors;

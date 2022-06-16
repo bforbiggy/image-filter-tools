@@ -12,12 +12,11 @@ public class AsciiScale {
         return ASCII[index];
     }
 
-    public static char[][] convertColors(Color[][] colors, bool detailed = false) {
-        char[][] text = new char[colors.Length][];
-        for (int y = 0; y < colors.Length; y++) {
-            text[y] = new char[colors[y].Length];
-            for (int x = 0; x < colors[0].Length; x++) {
-                text[y][x] = convertColor(colors[y][x], detailed);
+    public static char[,] convertColors(Color[,] colors, bool detailed = false) {
+        char[,] text = new char[colors.GetLength(0), colors.GetLength(1)];
+        for (int y = 0; y < colors.GetLength(0); y++) {
+            for (int x = 0; x < colors.GetLength(1); x++) {
+                text[y, x] = convertColor(colors[y, x], detailed);
             }
         }
         return text;

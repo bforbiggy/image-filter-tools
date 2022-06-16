@@ -4,21 +4,21 @@ using System.Drawing;
 using System.Drawing.Imaging;
 
 public class BlurFilter {
-    public static Color avgAroundPoint(Color[][] colors, int x, int y) {
+    public static Color avgAroundPoint(Color[,] colors, int x, int y) {
         int red = 0;
         int green = 0;
         int blue = 0;
         for (int col = x - 1; col <= x + 1; col++) {
             for (int row = y - 1; row <= y + 1; row++) {
-                red += colors[row][col].R;
-                green += colors[row][col].G;
-                blue += colors[row][col].B;
+                red += colors[row, col].R;
+                green += colors[row, col].G;
+                blue += colors[row, col].B;
             }
         }
         return Color.FromArgb(red / 9, green / 9, blue / 9);
     }
 
-    public static Color avgAroundPoint(Bitmap img, int x, int y) {
+    private static Color avgAroundPoint(Bitmap img, int x, int y) {
         int red = 0;
         int green = 0;
         int blue = 0;
@@ -33,15 +33,14 @@ public class BlurFilter {
         return Color.FromArgb(red / 9, green / 9, blue / 9);
     }
 
-    public static Color[][] convertColors(Color[][] colors) {
-        Color[][] grayColors = new Color[colors.Length][];
+    public static Color[,] convertColors(Color[,] colors) {
+        Color[,] grayColors = new Color[colors.GetLength(0), colors.GetLength(1)];
         for (int y = 0; y < colors.Length; y++) {
-            grayColors[y] = new Color[colors[y].Length];
-            for (int x = 0; x < colors.Length; x++) {
-                if (x != 0 && x != colors[0].Length && y >= 0 && y < colors.Length)
-                    grayColors[y][x] = avgAroundPoint(colors, x, y);
+            for (int x = 0; x < colors.GetLength(1); x++) {
+                if (x != 0 && x != colors.GetLength(1) && y >= 0 && y < colors.GetLength(0))
+                    grayColors[y, x] = avgAroundPoint(colors, x, y);
                 else
-                    grayColors[y][x] = colors[y][x];
+                    grayColors[y, x] = colors[y, x];
             }
         }
         return grayColors;
