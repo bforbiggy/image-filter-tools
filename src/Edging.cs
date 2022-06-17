@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
-public class EdgeFilter {
+public class Edging {
     /// <summary>
     /// A function that measures the difference (aka intensity) between two colors.
     /// A positive result means an increase in intensity and vice versa.
@@ -31,20 +31,20 @@ public class EdgeFilter {
         return colors;
     }
 
-    public static void writeConverted(Bitmap img, Stream output) {
+    public static void convertImg(Bitmap img) {
         Color[,] colors = new Color[img.Height, img.Width];
         for (int y = 0; y < img.Height; y++) {
             for (int x = 0; x < img.Width; x++) {
-                colors[y, x] = img.GetPixel(x, y);
+                int deltaX = deltaColor(colors[y, x], colors[y, x + 1]);
+                int deltaY = deltaColor(colors[y, x], colors[y + 1, x]);
+                int c = Math.Clamp(Math.Abs(deltaX) + Math.Abs(deltaY), 0, 255);
+                img.SetPixel(y, x, Color.FromArgb(c, c, c));
             }
         }
-        colors = convertColors(colors);
+    }
 
-        for (int x = 0; x < img.Width; x++) {
-            for (int y = 0; y < img.Height; y++) {
-                img.SetPixel(x, y, colors[y, x]);
-            }
-        }
+    public static void writeConverted(Bitmap img, Stream output) {
+        convertImg(img);
         img.Save(output, ImageFormat.Jpeg);
     }
 }

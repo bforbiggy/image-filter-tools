@@ -100,7 +100,7 @@ public class Program {
         edge.SetHandler((inputPath, outputPath, scaleFactor) => {
             Bitmap img = imgFromPath(inputPath.FullName, scaleFactor);
             FileStream fs = File.Create(outputPath ?? genOutputPath(inputPath.FullName, ".jpg"));
-            EdgeFilter.writeConverted(img, fs);
+            Edging.writeConverted(img, fs);
         }, input, output, resize);
 
         // Sharpen image
@@ -108,7 +108,7 @@ public class Program {
         sharpen.SetHandler((inputPath, outputPath, scaleFactor) => {
             Bitmap img = imgFromPath(inputPath.FullName, scaleFactor);
             FileStream fs = File.Create(outputPath ?? genOutputPath(inputPath.FullName, ".jpg"));
-            SharpenFilter.writeConverted(img, fs);
+            Sharpener.writeConverted(img, fs);
         }, input, output, resize);
         #endregion
 

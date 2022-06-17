@@ -5,32 +5,19 @@ using System.Drawing.Imaging;
 
 public class BlurFilter {
     public static Color avgAroundPoint(Color[,] colors, int x, int y) {
-        int red = 0;
-        int green = 0;
-        int blue = 0;
-        for (int col = x - 1; col <= x + 1; col++) {
-            for (int row = y - 1; row <= y + 1; row++) {
-                red += colors[row, col].R;
-                green += colors[row, col].G;
-                blue += colors[row, col].B;
+        int r = 0, g = 0, b = 0, count = 0;
+        int rowmax = Math.Min(x + 1, colors.GetLength(0) - 1);
+        int colmax = Math.Min(y + 1, colors.GetLength(1) - 1);
+        for (int row = Math.Max(0, x - 1); row <= rowmax; row++) {
+            for (int col = Math.Max(0, y - 1); col <= colmax; col++) {
+                Color color = colors[row, col];
+                r += color.R;
+                g += color.G;
+                b += color.B;
+                count++;
             }
         }
-        return Color.FromArgb(red / 9, green / 9, blue / 9);
-    }
-
-    private static Color avgAroundPoint(Bitmap img, int x, int y) {
-        int red = 0;
-        int green = 0;
-        int blue = 0;
-        for (int col = x - 1; col <= x + 1; col++) {
-            for (int row = y - 1; row <= y + 1; row++) {
-                Color color = img.GetPixel(col, row);
-                red += color.R;
-                green += color.G;
-                blue += color.B;
-            }
-        }
-        return Color.FromArgb(red / 9, green / 9, blue / 9);
+        return Color.FromArgb(r / count, g / count, b / count);
     }
 
     public static Color[,] convertColors(Color[,] colors) {
@@ -47,17 +34,21 @@ public class BlurFilter {
     }
 
     public static void writeConverted(Bitmap img, Stream output) {
-        for (int x = 0; x < img.Width; x++) {
-            for (int y = 0; y < img.Height; y++) {
-                Color color;
-                if (x != 0 && x != img.Width - 1 && y != 0 && y != img.Height - 1)
-                    color = BlurFilter.avgAroundPoint(img, x, y);
-                else
-                    color = img.GetPixel(x, y);
-                img.SetPixel(x, y, color);
+        // Gets blurred version of image
+        Color[,] colors = new Color[img.Height, img.Width];
+        for (int y = 0; y < img.Height; y++) {
+            for (int x = 0; x < img.Width; x++) {
+                colors[y, x] = img.GetPixel(x, y);
             }
         }
+        convertColors(colors);
 
+        // Writes blurred version of image to bitmap
+        for (int y = 0; y < img.Height; y++) {
+            for (int x = 0; x < img.Height; x++) {
+                img.SetPixel(x, y, colors[y, x]);
+            }
+        }
         img.Save(output, ImageFormat.Jpeg);
     }
 }
