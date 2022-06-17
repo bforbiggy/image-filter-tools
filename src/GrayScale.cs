@@ -19,16 +19,12 @@ public class GrayScale {
         return grayColors;
     }
 
-    public static void convertImg(Bitmap img) {
+    public static void writeConverted(Bitmap img, Stream output) {
         for (int y = 0; y < img.Height; y++) {
             for (int x = 0; x < img.Width; x++) {
                 img.SetPixel(x, y, GrayScale.convertColor(img.GetPixel(x, y)));
             }
         }
-    }
-
-    public static void writeConverted(Bitmap img, Stream output) {
-        convertImg(img);
         img.Save(output, ImageFormat.Jpeg);
     }
 }
