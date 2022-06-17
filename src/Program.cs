@@ -35,7 +35,7 @@ public class Program {
         if (userOutput != null && userOutput.Length == 0)
             return userOutput;
 
-        return inputPath.DirectoryName + Path.GetFileNameWithoutExtension(inputPath.FullName) + "_output" + ext;
+        return $"{inputPath.DirectoryName}/{Path.GetFileNameWithoutExtension(inputPath.FullName)}_output{ext}";
     }
 
     public static void Main(string[] args) {
