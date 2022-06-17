@@ -25,18 +25,17 @@ public class Program {
 
     /// <summary>
     /// This method verifies that the user inputted a valid path.
-    /// If the path is invalid, 
+    /// If the path is invalid, generate a path based on input file path.
     /// This is useful for generating output paths that do not override original images.
     /// </summary>
-    /// <param name="inputPath">The original source image path.</param>
+    /// <param name="userOutput">The user specified</param>
     /// <param name="ext">The extension of output, which is .jpg by default.</param>
     /// <returns>Output path.</returns>
-    private static string getValidPath(string userOutput, string inputPath, string ext = ".jpg") {
-        if (userOutput.Length == 0)
+    private static string getValidPath(string userOutput, FileInfo inputPath, string ext = ".jpg") {
+        if (userOutput != null && userOutput.Length == 0)
             return userOutput;
 
-        inputPath = Path.GetFullPath(inputPath) + Path.GetFileNameWithoutExtension(inputPath);
-        return inputPath + "_output" + ext;
+        return inputPath.DirectoryName + Path.GetFileNameWithoutExtension(inputPath.FullName) + "_output" + ext;
     }
 
     public static void Main(string[] args) {
@@ -49,7 +48,7 @@ public class Program {
         }
 
         #region Global options/arguments for program
-        Bitmap img;
+        Bitmap? img = null;
         Option<FileInfo> input = new Option<FileInfo>(
             aliases: new string[] { "-i", "--input" },
             description: "File location of image to process.",
@@ -94,48 +93,48 @@ public class Program {
         Command ascii = new Command("ascii", "Converts image to an ascii representation.");
         ascii.AddOption(detailed);
         ascii.SetHandler((inputPath, outputPath, scaleFactor, isDetailed) => {
-            img = scaleImg(img, scaleFactor);
-            FileStream fs = File.Create(getValidPath(outputPath, inputPath.FullName, ".txt"));
+            img = scaleImg(img!, scaleFactor);
+            FileStream fs = File.Create(getValidPath(outputPath, inputPath, ".txt"));
             AsciiScale.writeConverted(img, fs, isDetailed);
         }, input, output, resize, detailed);
 
         // Grayscale image
         Command grayscale = new Command("grayscale", "Converts image to grayscale.");
         grayscale.SetHandler((inputPath, outputPath, scaleFactor) => {
-            img = scaleImg(img, scaleFactor);
-            FileStream fs = File.Create(getValidPath(outputPath, inputPath.FullName));
+            img = scaleImg(img!, scaleFactor);
+            FileStream fs = File.Create(getValidPath(outputPath, inputPath));
             GrayScale.writeConverted(img, fs);
         }, input, output, resize);
 
         // Blur image
         Command blur = new Command("blur", "Performs a moving average blur.");
         blur.SetHandler((inputPath, outputPath, scaleFactor) => {
-            img = scaleImg(img, scaleFactor);
-            FileStream fs = File.Create(getValidPath(outputPath, inputPath.FullName));
+            img = scaleImg(img!, scaleFactor);
+            FileStream fs = File.Create(getValidPath(outputPath, inputPath));
             BlurFilter.writeConverted(img, fs);
         }, input, output, resize);
 
         // Edge detect image
         Command edge = new Command("edge", "Filter image to get image edges.");
         edge.SetHandler((inputPath, outputPath, scaleFactor) => {
-            img = scaleImg(img, scaleFactor);
-            FileStream fs = File.Create(getValidPath(outputPath, inputPath.FullName));
+            img = scaleImg(img!, scaleFactor);
+            FileStream fs = File.Create(getValidPath(outputPath, inputPath));
             Edging.writeConverted(img, fs);
         }, input, output, resize);
 
         // Sharpen image
         Command sharpen = new Command("sharpen", "Sharpen image.");
         sharpen.SetHandler((inputPath, outputPath, scaleFactor) => {
-            img = scaleImg(img, scaleFactor);
-            FileStream fs = File.Create(getValidPath(outputPath, inputPath.FullName));
+            img = scaleImg(img!, scaleFactor);
+            FileStream fs = File.Create(getValidPath(outputPath, inputPath));
             Sharpener.writeConverted(img, fs);
         }, input, output, resize);
 
         // Denoise image
         Command denoise = new Command("denoise", "Denoise image.");
         denoise.SetHandler((inputPath, outputPath, scaleFactor) => {
-            img = scaleImg(img, scaleFactor);
-            FileStream fs = File.Create(getValidPath(outputPath, inputPath.FullName));
+            img = scaleImg(img!, scaleFactor);
+            FileStream fs = File.Create(getValidPath(outputPath, inputPath));
             Denoiser.writeConverted(img, fs);
         }, input, output, resize);
         #endregion
