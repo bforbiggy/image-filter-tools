@@ -13,25 +13,29 @@ public class Program {
     /// <param name="path">Path to image</param>
     /// <param name="scale">Scale factor for image</param>
     /// <returns></returns>
-    private static Bitmap imgFromPath(string path, double scale = 1.0) {
-        Bitmap image = new Bitmap(path);
+    private static Bitmap scaleImg(Bitmap img, double scale = 1.0) {
         if (scale != 1.0) {
-            Size size = new Size((int)(image.Width * scale), (int)(image.Height * scale));
-            image = new Bitmap(image, size);
+            Size size = new Size((int)(img.Width * scale), (int)(img.Height * scale));
+            img = new Bitmap(img, size);
         }
-        return image;
+        return img;
     }
 
+
+
     /// <summary>
-    /// When given the path for the original source image, this method generates a new path.
+    /// This method verifies that the user inputted a valid path.
+    /// If the path is invalid, 
     /// This is useful for generating output paths that do not override original images.
     /// </summary>
     /// <param name="inputPath">The original source image path.</param>
     /// <param name="ext">The extension of output, which is .jpg by default.</param>
     /// <returns>Output path.</returns>
-    private static string genOutputPath(string inputPath, string ext = ".jpg") {
-        if (Path.HasExtension(inputPath))
-            inputPath = inputPath.Substring(0, inputPath.LastIndexOf("."));
+    private static string getValidPath(string userOutput, string inputPath, string ext = ".jpg") {
+        if (userOutput.Length == 0)
+            return userOutput;
+
+        inputPath = Path.GetFullPath(inputPath) + Path.GetFileNameWithoutExtension(inputPath);
         return inputPath + "_output" + ext;
     }
 
@@ -45,9 +49,25 @@ public class Program {
         }
 
         #region Global options/arguments for program
+        Bitmap img;
         Option<FileInfo> input = new Option<FileInfo>(
             aliases: new string[] { "-i", "--input" },
-            description: "File location of image to process."
+            description: "File location of image to process.",
+            parseArgument: (result) => {
+                string path = result.Tokens.Single().Value;
+
+                if (!File.Exists(path))
+                    result.ErrorMessage = "File path does not point to a file.";
+
+                try {
+                    img = new Bitmap(path);
+                }
+                catch (ArgumentException) {
+                    result.ErrorMessage = "File could not be processed as an image.";
+                }
+
+                return new FileInfo(path);
+            }
         ) { IsRequired = true };
 
         Option<string> output = new Option<string>(
@@ -74,48 +94,48 @@ public class Program {
         Command ascii = new Command("ascii", "Converts image to an ascii representation.");
         ascii.AddOption(detailed);
         ascii.SetHandler((inputPath, outputPath, scaleFactor, isDetailed) => {
-            Bitmap img = imgFromPath(inputPath.FullName, scaleFactor);
-            FileStream fs = File.Create(outputPath ?? genOutputPath(inputPath.FullName, ".txt"));
+            img = scaleImg(img, scaleFactor);
+            FileStream fs = File.Create(getValidPath(outputPath, inputPath.FullName, ".txt"));
             AsciiScale.writeConverted(img, fs, isDetailed);
         }, input, output, resize, detailed);
 
         // Grayscale image
         Command grayscale = new Command("grayscale", "Converts image to grayscale.");
         grayscale.SetHandler((inputPath, outputPath, scaleFactor) => {
-            Bitmap img = imgFromPath(inputPath.FullName, scaleFactor);
-            FileStream fs = File.Create(outputPath ?? genOutputPath(inputPath.FullName, ".jpg"));
+            img = scaleImg(img, scaleFactor);
+            FileStream fs = File.Create(getValidPath(outputPath, inputPath.FullName));
             GrayScale.writeConverted(img, fs);
         }, input, output, resize);
 
         // Blur image
         Command blur = new Command("blur", "Performs a moving average blur.");
         blur.SetHandler((inputPath, outputPath, scaleFactor) => {
-            Bitmap img = imgFromPath(inputPath.FullName, scaleFactor);
-            FileStream fs = File.Create(outputPath ?? genOutputPath(inputPath.FullName, ".jpg"));
+            img = scaleImg(img, scaleFactor);
+            FileStream fs = File.Create(getValidPath(outputPath, inputPath.FullName));
             BlurFilter.writeConverted(img, fs);
         }, input, output, resize);
 
         // Edge detect image
         Command edge = new Command("edge", "Filter image to get image edges.");
         edge.SetHandler((inputPath, outputPath, scaleFactor) => {
-            Bitmap img = imgFromPath(inputPath.FullName, scaleFactor);
-            FileStream fs = File.Create(outputPath ?? genOutputPath(inputPath.FullName, ".jpg"));
+            img = scaleImg(img, scaleFactor);
+            FileStream fs = File.Create(getValidPath(outputPath, inputPath.FullName));
             Edging.writeConverted(img, fs);
         }, input, output, resize);
 
         // Sharpen image
         Command sharpen = new Command("sharpen", "Sharpen image.");
         sharpen.SetHandler((inputPath, outputPath, scaleFactor) => {
-            Bitmap img = imgFromPath(inputPath.FullName, scaleFactor);
-            FileStream fs = File.Create(outputPath ?? genOutputPath(inputPath.FullName, ".jpg"));
+            img = scaleImg(img, scaleFactor);
+            FileStream fs = File.Create(getValidPath(outputPath, inputPath.FullName));
             Sharpener.writeConverted(img, fs);
         }, input, output, resize);
 
         // Denoise image
         Command denoise = new Command("denoise", "Denoise image.");
         denoise.SetHandler((inputPath, outputPath, scaleFactor) => {
-            Bitmap img = imgFromPath(inputPath.FullName, scaleFactor);
-            FileStream fs = File.Create(outputPath ?? genOutputPath(inputPath.FullName, ".jpg"));
+            img = scaleImg(img, scaleFactor);
+            FileStream fs = File.Create(getValidPath(outputPath, inputPath.FullName));
             Denoiser.writeConverted(img, fs);
         }, input, output, resize);
         #endregion
