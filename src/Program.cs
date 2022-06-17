@@ -46,17 +46,17 @@ public class Program {
 
         #region Global options/arguments for program
         Option<FileInfo> input = new Option<FileInfo>(
-            aliases: new string[] { "--input", "--i" },
+            aliases: new string[] { "-i", "--input" },
             description: "File location of image to process."
         ) { IsRequired = true };
 
         Option<string> output = new Option<string>(
-            aliases: new string[] { "--output", "--o" },
+            aliases: new string[] { "-o", "--output" },
             description: "Output destination of processed image."
         );
 
         Option<double> resize = new Option<double>(
-            aliases: new string[] { "--resize", "--scale" },
+            aliases: new string[] { "-s", "--resize", "--scale" },
             description: "Scale the output image by this factor.",
             getDefaultValue: () => 1.0
         );
@@ -65,7 +65,7 @@ public class Program {
         #region Specific algorithms and their related options
         // Which ascii art set to use
         Option<bool> detailed = new Option<bool>(
-            aliases: new string[] { "--detailed", "--d" },
+            aliases: new string[] { "-d", "--detailed" },
             description: "Whether or not to use detailed ascii art set.",
             getDefaultValue: () => false
         );
