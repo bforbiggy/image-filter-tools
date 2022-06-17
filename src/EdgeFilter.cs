@@ -14,9 +14,9 @@ public class EdgeFilter {
     /// <param name="to"></param>
     /// <returns></returns>
     private static int deltaColor(Color from, Color to) {
-        from = GrayScale.convertColor(from);
-        to = GrayScale.convertColor(to);
-        return to.R - from.R;
+        int fromIntensity = from.R + from.G + from.B;
+        int toIntensity = to.R + to.G + to.B;
+        return (toIntensity - fromIntensity) / 3;
     }
 
     public static Color[,] convertColors(Color[,] colors) {

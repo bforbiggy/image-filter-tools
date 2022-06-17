@@ -39,9 +39,10 @@ public class SharpenFilter {
         // Apply edge enhancement to image
         for (int y = 0; y < colors.GetLength(0); y++) {
             for (int x = 0; x < colors.GetLength(1); x++) {
-                int r = Math.Clamp((int)(colors[y, x].R * (1 + edges[y, x].R / 255.0)), 0, 255);
-                int g = Math.Clamp((int)(colors[y, x].G * (1 + edges[y, x].G / 255.0)), 0, 255);
-                int b = Math.Clamp((int)(colors[y, x].B * (1 + edges[y, x].B / 255.0)), 0, 255);
+                // Subtract edges from original image to make blacks blacker
+                int r = Math.Clamp(colors[y, x].R - edges[y, x].R, 0, 255);
+                int g = Math.Clamp(colors[y, x].G - edges[y, x].G, 0, 255);
+                int b = Math.Clamp(colors[y, x].B - edges[y, x].B, 0, 255);
                 colors[y, x] = Color.FromArgb(r, g, b);
             }
         }
