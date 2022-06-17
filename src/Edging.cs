@@ -31,20 +31,20 @@ public class Edging {
         return colors;
     }
 
-    public static void convertImg(Bitmap img) {
+    public static void writeConverted(Bitmap img, Stream output) {
         Color[,] colors = new Color[img.Height, img.Width];
         for (int y = 0; y < img.Height; y++) {
             for (int x = 0; x < img.Width; x++) {
-                int deltaX = deltaColor(colors[y, x], colors[y, x + 1]);
-                int deltaY = deltaColor(colors[y, x], colors[y + 1, x]);
-                int c = Math.Clamp(Math.Abs(deltaX) + Math.Abs(deltaY), 0, 255);
-                img.SetPixel(y, x, Color.FromArgb(c, c, c));
+                colors[y, x] = img.GetPixel(x, y);
             }
         }
-    }
+        convertColors(colors);
 
-    public static void writeConverted(Bitmap img, Stream output) {
-        convertImg(img);
+        for (int y = 0; y < img.Height; y++) {
+            for (int x = 0; x < img.Width; x++) {
+                img.SetPixel(x, y, colors[y, x]);
+            }
+        }
         img.Save(output, ImageFormat.Jpeg);
     }
 }
