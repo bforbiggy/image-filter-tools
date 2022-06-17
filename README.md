@@ -28,7 +28,7 @@ However, you may specify more options as shown below
 
 output: Lets you specify output location  
 resize: Scales image by factor  
-detailed: (ascii ONLY) whether or not to use detailed ASCII char set
+detailed: (ASCII ONLY) whether or not to use detailed ASCII char set
 
 ## Filters
 
@@ -37,3 +37,4 @@ grayscale: Grayscales input image
 blur: Blurs images
 edge: Gets edges from image
 sharpen: Sharpens image
+denoise: Denoises image
