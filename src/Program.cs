@@ -13,7 +13,7 @@ public class Program {
     /// <param name="path">Path to image</param>
     /// <param name="scale">Scale factor for image</param>
     /// <returns></returns>
-    private static Bitmap imgFromPath(string path, double scale) {
+    private static Bitmap imgFromPath(string path, double scale = 1.0) {
         Bitmap image = new Bitmap(path);
         if (scale != 1.0) {
             Size size = new Size((int)(image.Width * scale), (int)(image.Height * scale));
@@ -110,6 +110,14 @@ public class Program {
             FileStream fs = File.Create(outputPath ?? genOutputPath(inputPath.FullName, ".jpg"));
             Sharpener.writeConverted(img, fs);
         }, input, output, resize);
+
+        // Denoise image
+        Command denoise = new Command("denoise", "Denoise image.");
+        denoise.SetHandler((inputPath, outputPath, scaleFactor) => {
+            Bitmap img = imgFromPath(inputPath.FullName, scaleFactor);
+            FileStream fs = File.Create(outputPath ?? genOutputPath(inputPath.FullName, ".jpg"));
+            Denoiser.writeConverted(img, fs);
+        }, input, output, resize);
         #endregion
 
         // Create root command and add global options
@@ -124,6 +132,7 @@ public class Program {
         rootCommand.AddCommand(blur);
         rootCommand.AddCommand(edge);
         rootCommand.AddCommand(sharpen);
+        rootCommand.AddCommand(denoise);
 
         rootCommand.Invoke(args);
     }

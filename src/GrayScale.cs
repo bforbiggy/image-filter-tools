@@ -10,13 +10,12 @@ public class GrayScale {
     }
 
     public static Color[,] convertColors(Color[,] colors) {
-        Color[,] grayColors = new Color[colors.GetLength(0), colors.GetLength(1)];
-        for (int y = 0; y < colors.Length; y++) {
-            for (int x = 0; x < colors.Length; x++) {
-                grayColors[y, x] = convertColor(colors[y, x]);
+        for (int y = 0; y < colors.GetLength(0); y++) {
+            for (int x = 0; x < colors.GetLength(1); x++) {
+                colors[y, x] = convertColor(colors[y, x]);
             }
         }
-        return grayColors;
+        return colors;
     }
 
     public static void writeConverted(Bitmap img, Stream output) {
