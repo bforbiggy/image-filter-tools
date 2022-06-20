@@ -130,13 +130,21 @@ public class Program {
             Sharpener.writeConverted(img, fs);
         }, input, output, resize);
 
+        // Denoise pass count
+        Option<int> passes = new Option<int>(
+            aliases: new string[] { "-p", "--passes" },
+            description: "Number of passes to perform denoising.",
+            getDefaultValue: () => 1
+        );
+
         // Denoise image
         Command denoise = new Command("denoise", "Denoise image.");
-        denoise.SetHandler((inputPath, outputPath, scaleFactor) => {
+        denoise.SetHandler((inputPath, outputPath, scaleFactor, passCount) => {
             img = scaleImg(img!, scaleFactor);
             FileStream fs = File.Create(getValidPath(outputPath, inputPath));
-            Denoiser.writeConverted(img, fs);
-        }, input, output, resize);
+            Denoiser.writeConverted(img, fs, passCount);
+        }, input, output, resize, passes);
+        denoise.AddOption(passes);
         #endregion
 
         // Create root command and add global options
