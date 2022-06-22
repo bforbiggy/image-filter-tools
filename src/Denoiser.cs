@@ -31,6 +31,7 @@ public class Denoiser {
         return kernel;
     }
 
+    //TODO: Prevent darkening
     private static double convolve(Color[,] colors, int x, int y) {
         // Used to store the sum of the kernel
         double val = 0, percent = 0;
@@ -81,7 +82,7 @@ public class Denoiser {
                 colors[x, y] = img.GetPixel(x, y);
             }
         }
-        convertColors(colors, passCount);
+        colors = convertColors(colors, passCount);
 
         for (int y = 0; y < img.Height; y++) {
             for (int x = 0; x < img.Width; x++) {

@@ -1,5 +1,5 @@
 ﻿namespace image_filter_tools;
-
+//TODO: Use imagesharp instead...
 using System.Drawing;
 using System.CommandLine;
 using System.IO;
