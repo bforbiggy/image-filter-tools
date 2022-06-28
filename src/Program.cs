@@ -121,13 +121,14 @@ public class Program {
 		  img.Save(fs, new PngEncoder());
 		}, input, output, resize);
 
-		// // Edge detect image
-		// Command edge = new Command("edge", "Filter image to get image edges.");
-		// edge.SetHandler((inputPath, outputPath, scaleFactor) => {
-		//   img = scaleImg(ref img!, scaleFactor);
-		//   FileStream fs = File.Create(getValidPath(outputPath, inputPath));
-		//   Edging.writeConverted(ref img, fs);
-		// }, input, output, resize);
+		// Edge detect image
+		Command edge = new Command("edge", "Filter image to get image edges.");
+		edge.SetHandler((inputPath, outputPath, scaleFactor) => {
+		  scaleImg(ref img, scaleFactor);
+			Edging.convertColors(ref img);
+		  FileStream fs = File.Create(getValidPath(outputPath, inputPath));
+		  img.Save(fs, new PngEncoder());
+		}, input, output, resize);
 
 		// // Sharpen image
 		// Command sharpen = new Command("sharpen", "Sharpen image.");
@@ -164,7 +165,7 @@ public class Program {
 		rootCommand.AddCommand(ascii);
 		rootCommand.AddCommand(grayscale);
 		rootCommand.AddCommand(blur);
-		// rootCommand.AddCommand(edge);
+		rootCommand.AddCommand(edge);
 		// rootCommand.AddCommand(sharpen);
 		// rootCommand.AddCommand(denoise);
 

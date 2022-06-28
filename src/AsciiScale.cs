@@ -2,7 +2,6 @@ namespace image_filter_tools;
 
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
 
 public class AsciiScale {
 	public const double xInc = 1;

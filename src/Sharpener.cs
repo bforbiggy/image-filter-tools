@@ -7,7 +7,7 @@ public class Sharpener {
 	public static Color[,] convertColors(Color[,] colors) {
 		// Grab edges to enhance
 		Color[,] edges = (Color[,])colors.Clone();
-		edges = Edging.convertColors(edges);
+		//edges = Edging.convertColors(edges);
 
 		// Apply edge enhancement to image
 		for (int y = 0; y < colors.GetLength(0) - 1; y++) {
