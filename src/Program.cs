@@ -1,12 +1,11 @@
 ﻿namespace image_filter_tools;
 
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 using System.IO;
 using System.CommandLine;
 using System.CommandLine.Parsing;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Png;
 
 public class Program {
@@ -25,8 +24,6 @@ public class Program {
 		}
 		return img;
 	}
-
-
 
 	/// <summary>
 	/// This method verifies that the user inputted a valid path.
@@ -83,6 +80,12 @@ public class Program {
 				description: "Scale the output image by this factor.",
 				getDefaultValue: () => 1.0
 		);
+
+		Option<int> passes = new Option<int>(
+				aliases: new string[] { "-p", "--passes" },
+				description: "Number of passes",
+				getDefaultValue: () => 1
+		);
 		#endregion
 
 		#region Specific algorithms and their related options
@@ -138,13 +141,6 @@ public class Program {
 			FileStream fs = File.Create(getValidPath(outputPath, inputPath));
 			img.Save(fs, new PngEncoder());
 		}, input, output, resize);
-
-		// // Denoise pass count
-		// Option<int> passes = new Option<int>(
-		//     aliases: new string[] { "-p", "--passes" },
-		//     description: "Number of passes to perform denoising.",
-		//     getDefaultValue: () => 1
-		// );
 
 		// // Denoise image
 		// Command denoise = new Command("denoise", "Denoise image.");

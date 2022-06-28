@@ -23,7 +23,7 @@ public class Edging {
 				int deltaX = deltaColor(img[y, x], img[y, x + 1]);
 				int deltaY = deltaColor(img[y, x], img[y + 1, x]);
 				int c = Math.Clamp(Math.Abs(deltaX) + Math.Abs(deltaY), 0, 255);
-				Rgba32 newPixel = new Rgba32((byte)c, (byte)c,(byte)c);
+				Rgba32 newPixel = new Rgba32((byte)c, (byte)c, (byte)c);
 				img[y, x] = newPixel;
 			}
 		}
