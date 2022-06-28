@@ -1,54 +1,41 @@
 namespace image_filter_tools;
 
-using System.Drawing;
-using System.Drawing.Imaging;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 public class BlurFilter {
-	public static Color avgAroundPoint(Color[,] colors, int x, int y) {
+	[Obsolete("This is incredibly inefficient, do not use.")]
+	public static Rgba32 avgAroundPoint(ref Image<Rgba32> img, int xOrg, int yOrg) {
 		int r = 0, g = 0, b = 0, count = 0;
-		int rowmax = Math.Min(x + 1, colors.GetLength(0) - 1);
-		int colmax = Math.Min(y + 1, colors.GetLength(1) - 1);
-		for (int row = Math.Max(0, x - 1); row <= rowmax; row++) {
-			for (int col = Math.Max(0, y - 1); col <= colmax; col++) {
-				Color color = colors[row, col];
+		int yMax = Math.Min(yOrg + 1, img.Height - 1);
+		int xMax = Math.Min(xOrg + 1, img.Width - 1);
+		for (int y = Math.Max(0, yOrg - 1); y <= yMax; y++) {
+			for (int x = Math.Max(0, xOrg - 1); x <= xMax; x++) {
+				Rgba32 color = img[y, x];
 				r += color.R;
 				g += color.G;
 				b += color.B;
 				count++;
 			}
 		}
-		return Color.FromArgb(r / count, g / count, b / count);
+
+		return new Rgba32((byte)(r / count), (byte)(g / count), (byte)(b / count));
 	}
 
-	public static Color[,] convertColors(Color[,] colors) {
-		Color[,] grayColors = new Color[colors.GetLength(0), colors.GetLength(1)];
-		for (int y = 0; y < colors.Length; y++) {
-			for (int x = 0; x < colors.GetLength(1); x++) {
-				if (x != 0 && x != colors.GetLength(1) && y >= 0 && y < colors.GetLength(0))
-					grayColors[y, x] = avgAroundPoint(colors, x, y);
-				else
-					grayColors[y, x] = colors[y, x];
-			}
-		}
-		return grayColors;
-	}
-
-	public static void writeConverted(Bitmap img, Stream output) {
-		// Gets blurred version of image
-		Color[,] colors = new Color[img.Height, img.Width];
+	public static void convertImage(ref Image<Rgba32> img) {
+		// Generate blurred copy of img into array
+		Rgba32[,] blurred = new Rgba32[img.Height, img.Width];
 		for (int y = 0; y < img.Height; y++) {
 			for (int x = 0; x < img.Width; x++) {
-				colors[y, x] = img.GetPixel(x, y);
+				blurred[y, x] = avgAroundPoint(ref img, x, y);
 			}
 		}
-		convertColors(colors);
 
-		// Writes blurred version of image to bitmap
+		// Copy blurred array back into img
 		for (int y = 0; y < img.Height; y++) {
-			for (int x = 0; x < img.Height; x++) {
-				img.SetPixel(x, y, colors[y, x]);
+			for (int x = 0; x < img.Width; x++) {
+				img[y, x] = blurred[y, x];
 			}
 		}
-		img.Save(output, ImageFormat.Jpeg);
 	}
 }

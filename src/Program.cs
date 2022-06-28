@@ -36,7 +36,7 @@ public class Program {
 	/// <param name="userOutput">The user specified</param>
 	/// <param name="ext">The extension of output, which is .jpg by default.</param>
 	/// <returns>Output path.</returns>
-	private static string getValidPath(string userOutput, FileInfo inputPath, string ext = ".jpg") {
+	private static string getValidPath(string userOutput, FileInfo inputPath, string ext = ".png") {
 		if (userOutput != null && userOutput.Length == 0)
 			return userOutput;
 
@@ -112,13 +112,14 @@ public class Program {
 
 		}, input, output, resize);
 
-		// // Blur image
-		// Command blur = new Command("blur", "Performs a moving average blur.");
-		// blur.SetHandler((inputPath, outputPath, scaleFactor) => {
-		//   img = scaleImg(ref img!, scaleFactor);
-		//   FileStream fs = File.Create(getValidPath(outputPath, inputPath));
-		//   BlurFilter.writeConverted(ref img, fs);
-		// }, input, output, resize);
+		// Blur image
+		Command blur = new Command("blur", "Performs a moving average blur.");
+		blur.SetHandler((inputPath, outputPath, scaleFactor) => {
+		  scaleImg(ref img, scaleFactor);
+			BlurFilter.convertImage(ref img);
+		  FileStream fs = File.Create(getValidPath(outputPath, inputPath));
+		  img.Save(fs, new PngEncoder());
+		}, input, output, resize);
 
 		// // Edge detect image
 		// Command edge = new Command("edge", "Filter image to get image edges.");
@@ -162,7 +163,7 @@ public class Program {
 		// Enable all available image operations
 		rootCommand.AddCommand(ascii);
 		rootCommand.AddCommand(grayscale);
-		// rootCommand.AddCommand(blur);
+		rootCommand.AddCommand(blur);
 		// rootCommand.AddCommand(edge);
 		// rootCommand.AddCommand(sharpen);
 		// rootCommand.AddCommand(denoise);
