@@ -1,42 +1,23 @@
 namespace image_filter_tools;
 
-using System.Drawing;
-using System.Drawing.Imaging;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 public class Sharpener {
-	public static Color[,] convertColors(Color[,] colors) {
+	public static void convertColors(ref Image<Rgba32> img) {
 		// Grab edges to enhance
-		Color[,] edges = (Color[,])colors.Clone();
-		//edges = Edging.convertColors(edges);
+		Image<Rgba32> edges = img.Clone();
+		Edging.convertColors(ref edges);
 
 		// Apply edge enhancement to image
-		for (int y = 0; y < colors.GetLength(0) - 1; y++) {
-			for (int x = 0; x < colors.GetLength(1) - 1; x++) {
+		for (int y = 0; y < img.Height - 1; y++) {
+			for (int x = 0; x < img.Width - 1; x++) {
 				// Subtract edges from original image to make blacks blacker
-				int r = Math.Clamp(colors[y, x].R - edges[y, x].R / 2, 0, 255);
-				int g = Math.Clamp(colors[y, x].G - edges[y, x].G / 2, 0, 255);
-				int b = Math.Clamp(colors[y, x].B - edges[y, x].B / 2, 0, 255);
-				colors[y, x] = Color.FromArgb(r, g, b);
+				int r = Math.Clamp(img[y, x].R - edges[y, x].R / 2, 0, 255);
+				int g = Math.Clamp(img[y, x].G - edges[y, x].G / 2, 0, 255);
+				int b = Math.Clamp(img[y, x].B - edges[y, x].B / 2, 0, 255);
+				img[y, x] = new Rgba32((byte)r, (byte)g, (byte)b);
 			}
 		}
-
-		return colors;
-	}
-
-	public static void writeConverted(Bitmap img, Stream output) {
-		Color[,] colors = new Color[img.Height, img.Width];
-		for (int y = 0; y < img.Height; y++) {
-			for (int x = 0; x < img.Width; x++) {
-				colors[y, x] = img.GetPixel(x, y);
-			}
-		}
-		convertColors(colors);
-
-		for (int y = 0; y < img.Height; y++) {
-			for (int x = 0; x < img.Width; x++) {
-				img.SetPixel(x, y, colors[y, x]);
-			}
-		}
-		img.Save(output, ImageFormat.Jpeg);
 	}
 }

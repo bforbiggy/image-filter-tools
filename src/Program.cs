@@ -115,28 +115,29 @@ public class Program {
 		// Blur image
 		Command blur = new Command("blur", "Performs a moving average blur.");
 		blur.SetHandler((inputPath, outputPath, scaleFactor) => {
-		  scaleImg(ref img, scaleFactor);
+			scaleImg(ref img, scaleFactor);
 			BlurFilter.convertImage(ref img);
-		  FileStream fs = File.Create(getValidPath(outputPath, inputPath));
-		  img.Save(fs, new PngEncoder());
+			FileStream fs = File.Create(getValidPath(outputPath, inputPath));
+			img.Save(fs, new PngEncoder());
 		}, input, output, resize);
 
 		// Edge detect image
 		Command edge = new Command("edge", "Filter image to get image edges.");
 		edge.SetHandler((inputPath, outputPath, scaleFactor) => {
-		  scaleImg(ref img, scaleFactor);
+			scaleImg(ref img, scaleFactor);
 			Edging.convertColors(ref img);
-		  FileStream fs = File.Create(getValidPath(outputPath, inputPath));
-		  img.Save(fs, new PngEncoder());
+			FileStream fs = File.Create(getValidPath(outputPath, inputPath));
+			img.Save(fs, new PngEncoder());
 		}, input, output, resize);
 
-		// // Sharpen image
-		// Command sharpen = new Command("sharpen", "Sharpen image.");
-		// sharpen.SetHandler((inputPath, outputPath, scaleFactor) => {
-		//   img = scaleImg(ref img!, scaleFactor);
-		//   FileStream fs = File.Create(getValidPath(outputPath, inputPath));
-		//   Sharpener.writeConverted(ref img, fs);
-		// }, input, output, resize);
+		// Sharpen image
+		Command sharpen = new Command("sharpen", "Sharpen image.");
+		sharpen.SetHandler((inputPath, outputPath, scaleFactor) => {
+			scaleImg(ref img!, scaleFactor);
+			Sharpener.convertColors(ref img);
+			FileStream fs = File.Create(getValidPath(outputPath, inputPath));
+			img.Save(fs, new PngEncoder());
+		}, input, output, resize);
 
 		// // Denoise pass count
 		// Option<int> passes = new Option<int>(
@@ -166,7 +167,7 @@ public class Program {
 		rootCommand.AddCommand(grayscale);
 		rootCommand.AddCommand(blur);
 		rootCommand.AddCommand(edge);
-		// rootCommand.AddCommand(sharpen);
+		rootCommand.AddCommand(sharpen);
 		// rootCommand.AddCommand(denoise);
 
 		rootCommand.Invoke(args);
