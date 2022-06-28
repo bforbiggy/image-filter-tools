@@ -1,29 +1,23 @@
-namespace image_filter_tools;
-
-using System.Drawing;
-using System.Drawing.Imaging;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 public class GrayScale {
-    public static Color convertColor(Color color) {
-        int avg = (color.R + color.G + color.B) / 3;
-        return Color.FromArgb(avg, avg, avg);
-    }
+	public static void convertColor(ref Rgba32 color) {
+		int avg = (color.R + color.G + color.B) / 3;
+		color.R = (byte)avg;
+		color.G = (byte)avg;
+		color.B = (byte)avg;
+	}
 
-    public static Color[,] convertColors(Color[,] colors) {
-        for (int y = 0; y < colors.GetLength(0); y++) {
-            for (int x = 0; x < colors.GetLength(1); x++) {
-                colors[y, x] = convertColor(colors[y, x]);
-            }
-        }
-        return colors;
-    }
+	public static void convertImage(ref Image<Rgba32> img) {
+		img.ProcessPixelRows(accessor => {
+			for (int y = 0; y < accessor.Height; y++) {
+				Span<Rgba32> row = accessor.GetRowSpan(y);
 
-    public static void writeConverted(Bitmap img, Stream output) {
-        for (int y = 0; y < img.Height; y++) {
-            for (int x = 0; x < img.Width; x++) {
-                img.SetPixel(x, y, GrayScale.convertColor(img.GetPixel(x, y)));
-            }
-        }
-        img.Save(output, ImageFormat.Jpeg);
-    }
+				foreach (ref Rgba32 pixel in row) {
+					convertColor(ref pixel);
+				}
+			}
+		});
+	}
 }
