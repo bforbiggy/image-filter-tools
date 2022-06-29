@@ -31,31 +31,29 @@ public class Denoiser {
 		return kernel;
 	}
 
-	//TODO: Prevent darkening
-	private static double convolve(ref Image<Rgba32> img, int xOrg, int yOrg) {
+	private static Rgba32 convolve(ref Image<Rgba32> img, int xOrg, int yOrg) {
 		// Used to store the sum of the kernel
-		double val = 0;
+		double r = 0, g = 0, b = 0;
 
-		//TODO: WHAT IN TARNATION!?!?! 
+		xOrg -= KERNEL.GetLength(1) / 2;
+		yOrg -= KERNEL.GetLength(0) / 2;
 
-		// xOrg -= KERNEL.GetLength(1) / 2;
-		// yOrg -= KERNEL.GetLength(0) / 2;
+		// Iterate over the kernel
+		for (int ky = 0; ky < KERNEL.GetLength(0); ky++) {
+			for (int kx = 0; kx < KERNEL.GetLength(1); kx++) {
+				// Match relative kernel pos to pixel pos
+				int xPos = Math.Clamp(xOrg + kx, 0, img.Width - 1);
+				int yPos = Math.Clamp(yOrg + ky, 0, img.Height - 1);
 
-		// // Iterate over the kernel
-		// for (int ky = 0; ky < KERNEL.GetLength(0); ky++) {
-		// 	for (int kx = 0; kx < KERNEL.GetLength(1); kx++) {
-		// 		// Match relative kernel pos to pixel pos
-		// 		int xPos = Math.Clamp(kx + xOrg, 0, 2);
-		// 		int yPos = Math.Clamp(ky + yOrg, 0, 2);
+				// Calculate individual pixel value after convolution
+				Rgba32 pixel = img[xPos, yPos];
+				r += (pixel.R * KERNEL[ky, kx]);
+				g += (pixel.G * KERNEL[ky, kx]);
+				b += (pixel.B * KERNEL[ky, kx]);
+			}
+		}
 
-		// 		// Calculate individual pixel value after convlution
-		// 		//GrayScale.convertColor(img[yPos, xPos]);
-		// 		Rgba32 pixel = img[yPos, xPos];
-		// 		val += pixel.R * KERNEL[ky, kx];
-		// 	}
-		// }
-
-		return val;
+		return new Rgba32((byte)r, (byte)g, (byte)b);
 	}
 
 	public static void convertColors(ref Image<Rgba32> img, int passCount = 1) {
@@ -63,11 +61,7 @@ public class Denoiser {
 			//Image<Rgba32> imgCopy = img.Clone();
 			for (int y = 0; y < img.Height; y++) {
 				for (int x = 0; x < img.Width; x++) {
-					double intensity = convolve(ref img, x, y);
-					int r = (int)(img[y, x].R * intensity);
-					int g = (int)(img[y, x].G * intensity);
-					int b = (int)(img[y, x].B * intensity);
-					img[y, x] = new Rgba32((byte)r, (byte)g, (byte)b);
+					img[x, y] = convolve(ref img, x, y);
 				}
 			}
 		}
