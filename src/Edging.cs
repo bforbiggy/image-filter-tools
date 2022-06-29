@@ -17,7 +17,7 @@ public class Edging {
 		return (toIntensity - fromIntensity) / 3;
 	}
 
-	public static void convertColors(ref Image<Rgba32> img) {
+	public static void convertImage(ref Image<Rgba32> img) {
 		for (int y = 0; y < img.Height - 1; y++) {
 			for (int x = 0; x < img.Width - 1; x++) {
 				int deltaX = deltaColor(img[y, x], img[y, x + 1]);

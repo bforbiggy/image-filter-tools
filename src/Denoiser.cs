@@ -1,7 +1,7 @@
 namespace image_filter_tools;
 
-using System.Drawing;
-using System.Drawing.Imaging;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 public class Denoiser {
 	public static double[,] KERNEL = generateKernel(5, 5);
@@ -32,63 +32,44 @@ public class Denoiser {
 	}
 
 	//TODO: Prevent darkening
-	private static double convolve(Color[,] colors, int x, int y) {
+	private static double convolve(ref Image<Rgba32> img, int xOrg, int yOrg) {
 		// Used to store the sum of the kernel
-		double val = 0, percent = 0;
+		double val = 0;
 
-		y -= KERNEL.GetLength(0) / 2;
-		x -= KERNEL.GetLength(1) / 2;
+		//TODO: WHAT IN TARNATION!?!?! 
 
-		// Iterate over the kernel
-		for (int ky = 0; ky < KERNEL.GetLength(0); ky++) {
-			for (int kx = 0; kx < KERNEL.GetLength(1); kx++) {
-				// Match kernel to pixel pos
-				int xPos = kx + x;
-				int yPos = ky + y;
+		// xOrg -= KERNEL.GetLength(1) / 2;
+		// yOrg -= KERNEL.GetLength(0) / 2;
 
-				// Calculate kernel value intensity output
-				if (0 <= xPos && xPos < colors.GetLength(1) && 0 <= yPos && yPos < colors.GetLength(0)) {
-					Color gray = colors[yPos, xPos];//GrayScale.convertColor(colors[yPos, xPos]);
-					val += gray.R / 255.0 * KERNEL[ky, kx];
-					percent += KERNEL[ky, kx];
-				}
+		// // Iterate over the kernel
+		// for (int ky = 0; ky < KERNEL.GetLength(0); ky++) {
+		// 	for (int kx = 0; kx < KERNEL.GetLength(1); kx++) {
+		// 		// Match relative kernel pos to pixel pos
+		// 		int xPos = Math.Clamp(kx + xOrg, 0, 2);
+		// 		int yPos = Math.Clamp(ky + yOrg, 0, 2);
 
-			}
-		}
+		// 		// Calculate individual pixel value after convlution
+		// 		//GrayScale.convertColor(img[yPos, xPos]);
+		// 		Rgba32 pixel = img[yPos, xPos];
+		// 		val += pixel.R * KERNEL[ky, kx];
+		// 	}
+		// }
 
-		return val / percent;
+		return val;
 	}
 
-	public static Color[,] convertColors(Color[,] colors, int passCount = 1) {
+	public static void convertColors(ref Image<Rgba32> img, int passCount = 1) {
 		for (int i = 0; i < passCount; i++) {
-			Color[,] temp = (Color[,])colors.Clone();
-			for (int y = 0; y < colors.GetLength(0); y++) {
-				for (int x = 0; x < colors.GetLength(1); x++) {
-					double intensity = convolve(colors, x, y);
-					int r = (int)(colors[y, x].R * intensity);
-					int g = (int)(colors[y, x].G * intensity);
-					int b = (int)(colors[y, x].B * intensity);
-					colors[y, x] = Color.FromArgb(r, g, b);
+			//Image<Rgba32> imgCopy = img.Clone();
+			for (int y = 0; y < img.Height; y++) {
+				for (int x = 0; x < img.Width; x++) {
+					double intensity = convolve(ref img, x, y);
+					int r = (int)(img[y, x].R * intensity);
+					int g = (int)(img[y, x].G * intensity);
+					int b = (int)(img[y, x].B * intensity);
+					img[y, x] = new Rgba32((byte)r, (byte)g, (byte)b);
 				}
 			}
 		}
-		return colors;
-	}
-
-	public static void writeConverted(Bitmap img, Stream output, int passCount = 1) {
-		Color[,] colors = new Color[img.Height, img.Width];
-		for (int y = 0; y < img.Height; y++) {
-			for (int x = 0; x < img.Width; x++) {
-				colors[x, y] = img.GetPixel(x, y);
-			}
-		}
-		colors = convertColors(colors, passCount);
-
-		for (int y = 0; y < img.Height; y++) {
-			for (int x = 0; x < img.Width; x++) {
-				img.SetPixel(x, y, colors[x, y]);
-			}
-		}
-		img.Save(output, ImageFormat.Jpeg);
 	}
 }

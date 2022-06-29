@@ -4,10 +4,10 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 public class Sharpener {
-	public static void convertColors(ref Image<Rgba32> img) {
+	public static void convertImage(ref Image<Rgba32> img) {
 		// Grab edges to enhance
 		Image<Rgba32> edges = img.Clone();
-		Edging.convertColors(ref edges);
+		Edging.convertImage(ref edges);
 
 		// Apply edge enhancement to image
 		for (int y = 0; y < img.Height - 1; y++) {

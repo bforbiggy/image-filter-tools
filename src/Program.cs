@@ -128,7 +128,7 @@ public class Program {
 		Command edge = new Command("edge", "Filter image to get image edges.");
 		edge.SetHandler((inputPath, outputPath, scaleFactor) => {
 			scaleImg(ref img, scaleFactor);
-			Edging.convertColors(ref img);
+			Edging.convertImage(ref img);
 			FileStream fs = File.Create(getValidPath(outputPath, inputPath));
 			img.Save(fs, new PngEncoder());
 		}, input, output, resize);
@@ -136,20 +136,21 @@ public class Program {
 		// Sharpen image
 		Command sharpen = new Command("sharpen", "Sharpen image.");
 		sharpen.SetHandler((inputPath, outputPath, scaleFactor) => {
-			scaleImg(ref img!, scaleFactor);
-			Sharpener.convertColors(ref img);
+			scaleImg(ref img, scaleFactor);
+			Sharpener.convertImage(ref img);
 			FileStream fs = File.Create(getValidPath(outputPath, inputPath));
 			img.Save(fs, new PngEncoder());
 		}, input, output, resize);
 
-		// // Denoise image
-		// Command denoise = new Command("denoise", "Denoise image.");
-		// denoise.SetHandler((inputPath, outputPath, scaleFactor, passCount) => {
-		//   img = scaleImg(ref img!, scaleFactor);
-		//   FileStream fs = File.Create(getValidPath(outputPath, inputPath));
-		//   Denoiser.writeConverted(ref img, fs, passCount);
-		// }, input, output, resize, passes);
-		// denoise.AddOption(passes);
+		// Denoise image
+		Command denoise = new Command("denoise", "Denoise image.");
+		denoise.SetHandler((inputPath, outputPath, scaleFactor, passCount) => {
+			scaleImg(ref img, scaleFactor);
+			Denoiser.convertColors(ref img);
+			FileStream fs = File.Create(getValidPath(outputPath, inputPath));
+			img.Save(fs, new PngEncoder());
+		}, input, output, resize, passes);
+		denoise.AddOption(passes);
 		#endregion
 
 		// Create root command and add global options
@@ -164,7 +165,7 @@ public class Program {
 		rootCommand.AddCommand(blur);
 		rootCommand.AddCommand(edge);
 		rootCommand.AddCommand(sharpen);
-		// rootCommand.AddCommand(denoise);
+		rootCommand.AddCommand(denoise);
 
 		rootCommand.Invoke(args);
 	}
