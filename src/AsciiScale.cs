@@ -31,20 +31,4 @@ public class AsciiScale {
 
 		return text;
 	}
-
-	public static void writeConverted(ref Image<Rgba32> img, Stream output, bool detailed = false) {
-		StreamWriter sw = new StreamWriter(output);
-
-		img.ProcessPixelRows((accessor) => {
-			for (double y = 0; y < accessor.Height; y += yInc) {
-				Span<Rgba32> pixelRow = accessor.GetRowSpan((int)y);
-				for (double x = 0; x < pixelRow.Length; x += xInc) {
-					sw.Write(convertColor(ref pixelRow[(int)x], detailed));
-				}
-				sw.Write("\n");
-			}
-		});
-
-		sw.Close();
-	}
 }
