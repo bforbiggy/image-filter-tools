@@ -3,7 +3,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 public class GrayScale {
-	public static void convertColor(ref Rgba32 color) {
+	public static void convertPixel(ref Rgba32 color) {
 		int avg = (color.R + color.G + color.B) / 3;
 		color.R = (byte)avg;
 		color.G = (byte)avg;
@@ -16,7 +16,7 @@ public class GrayScale {
 				Span<Rgba32> row = accessor.GetRowSpan(y);
 
 				foreach (ref Rgba32 pixel in row) {
-					convertColor(ref pixel);
+					convertPixel(ref pixel);
 				}
 			}
 		});

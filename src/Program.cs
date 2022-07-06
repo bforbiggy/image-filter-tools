@@ -101,8 +101,8 @@ public class Program {
 		ascii.AddOption(detailed);
 		ascii.SetHandler((inputPath, outputPath, scaleFactor, isDetailed) => {
 			scaleImg(ref img, scaleFactor);
-			FileStream fs = File.Create(getValidPath(outputPath, inputPath, ".txt"));
-			AsciiScale.writeConverted(ref img, fs, isDetailed);
+			string text = AsciiScale.convertImage(ref img);
+			File.WriteAllText(text, getValidPath(outputPath, inputPath, ".txt"));
 		}, input, output, resize, detailed);
 
 		// Grayscale image
