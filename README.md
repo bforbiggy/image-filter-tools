@@ -2,7 +2,7 @@
 
 ### Image filter tools is a command line tool for applying simple filters/operations on images.
 
-<img src="https://www.techexplorist.com/wp-content/uploads/2018/02/Proboscis-monkey1-768x432.jpg"/> 
+<img src="https://i.imgur.com/gbZFbD6.jpg"/> 
  
  
 ## How To Use
